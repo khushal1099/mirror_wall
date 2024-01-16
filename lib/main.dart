@@ -1,14 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mirror_wall/controller/provider/bookmark_provider.dart';
-import 'package:mirror_wall/controller/provider/connectivity_provider.dart';
+import 'package:mirror_wall/controller/provider/url_provider.dart';
 import 'package:mirror_wall/view/home_page.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+late SharedPreferences prefs;
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //  for error goto /android/app/build.gradle
-  // and change targetSdkVersion 34, compileSdkVersion 34
+  prefs = await SharedPreferences.getInstance();
   runApp(MyApp());
 }
 
@@ -20,22 +20,17 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => ConnectivityProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => BookMarkProvider(),
-        ),
+          create: (context) => UrlProvider(),
+        )
       ],
-      builder: (context, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: "Hello",
-          initialRoute: '/',
-          routes: {
-            '/': (context) => MyWebView(url: "https://www.google.com/"),
-          },
-        );
-      },
+      builder: (context, child) => MaterialApp(
+        theme: ThemeData.light(
+          useMaterial3: true,
+        ),
+        debugShowCheckedModeBanner: false,
+        title: "Hello",
+        home: MyWebView(url: "https://www.google.com"),
+      ),
     );
   }
 }
